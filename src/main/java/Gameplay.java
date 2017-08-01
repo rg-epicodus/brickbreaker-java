@@ -23,7 +23,10 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
     private int ballXDir = -1;
     private int ballYDir = -2;
 
+    private MapGenerator map;
+
     public Gameplay() {
+        map = new MapGenerator(3,7);
         addKeyListener(this);
         setFocusable(true);
         setFocusTraversalKeysEnabled(false);
@@ -35,6 +38,9 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
         // bakcground
         g.setColor(Color.black);
         g.fillRect(1,1,692, 592);
+
+        // draw map
+        map.draw((Graphics2D)g);
 
         // borders
         g.setColor(Color.yellow);
@@ -56,7 +62,49 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-//        timer.start();
+        if(play){
+            if(new Rectangle(ballPosX, ballPosY, 20, 20).intersects(new Rectangle(playerX, 550, 100, 8))) {
+                ballYDir = -ballYDir;
+            }
+
+            for (int i = 0; i < map.map.length; i++ ) {
+                for (int j = 0; j<map.map[0].length; j++){
+                    if (map.map[i][j]>0){
+                        int brickX = j*map.brickWidth+80;
+                        int brickY = i*map.brickHeight+50;
+                        int brickWidth = map.brickWidth;
+                        int brickHeight = map.brickHeight;
+
+                        Rectangle rect = new Rectangle(brickX, brickY, brickWidth, brickHeight);
+                        Rectangle ballRect = new Rectangle(ballPosX, ballPosY, 20, 20);
+                        Rectangle brickRect = rect;
+
+                        if(ballRect.intersects(brickRect)) {
+                            map.setBrickValue(0, i, j);
+                            totalBricks--1;
+                            score += 5;
+
+                            if(ballPosX +19 <= brickRect.x || ballPosX +1 >= brickRect.x + brickRect.width) {
+                            }  else
+
+                        }
+                    }
+                }
+            }
+
+            ballPosX += ballXDir;
+            ballPosY += ballYDir;
+            if(ballPosX < 0){
+                ballXDir = -ballXDir;
+            }
+            if(ballPosY < 0){
+                ballYDir = -ballYDir;
+            }
+            if(ballPosX > 670){
+                ballXDir = -ballXDir;
+            }
+        }
+
         repaint();
     }
     @Override
